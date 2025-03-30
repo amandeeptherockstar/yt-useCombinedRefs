@@ -1,63 +1,17 @@
-import { useEffect, useRef, useState } from "react";
-import { FieldValues } from "react-hook-form";
-import { useCombinedRefs } from "../../hooks/useCombinedRefs";
 import { popularSearches } from "../../data";
 
-interface InputFieldProps {
-  field: FieldValues;
-}
+const showSidebar = false;
 
-const InputField = ({ field }: InputFieldProps) => {
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  const manualSearch = useRef<boolean>(false);
-  const innerRef = useRef<HTMLInputElement | null>(null);
-  const combinedRef = useCombinedRefs(field.ref, innerRef);
-
-  const handleFocus = () => {
-    setShowSidebar(field.value.length >= 3);
-  };
-
-  const handleBlur = () => {
-    // Delay the hiding of the sidebar to allow for click events to register
-    setTimeout(() => {
-      setShowSidebar(false);
-    }, 100);
-  };
-
-  useEffect(() => {
-    if (manualSearch.current) {
-      manualSearch.current = false;
-      return;
-    }
-
-    if (field.value.length >= 3) {
-      setShowSidebar(true);
-    } else {
-      setShowSidebar(false);
-    }
-  }, [setShowSidebar, field.value]);
-
-  const handleClearInput = () => {
-    field.onChange("");
-    innerRef.current?.focus();
-    setShowSidebar(false);
-  };
-
+const InputField = () => {
   return (
     <div className="relative">
       <div className="flex items-center gap-x-2">
         <input
-          {...field}
-          ref={combinedRef}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
           placeholder="Search products..."
           className="w-full max-w-md rounded-md border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         />
         <button
           type="button"
-          onClick={handleClearInput}
           className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           Clear
@@ -78,11 +32,6 @@ const InputField = ({ field }: InputFieldProps) => {
                 <li key={item.id}>
                   <button
                     type="button"
-                    onClick={() => {
-                      manualSearch.current = true;
-                      field.onChange(item.term);
-                      setShowSidebar(false);
-                    }}
                     className="w-full text-left text-sm text-gray-700 hover:text-indigo-600 cursor-pointer"
                   >
                     {item.term}{" "}
